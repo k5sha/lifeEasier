@@ -17,6 +17,9 @@ A Telegram bot built in Golang to help people remember to do their useful things
 
 ### How it works:
 If you find something interesting on the internet or want to do something in the future, simply send the link or a message to the bot. It will store your request and send you the link or reminder at a later time, when you need it most.
+<p align="center">
+  <img src="https://github.com/k5sha/lifeEasier/blob/master/media/how.jpg" alt="How work" width="726"/>
+</p>
 
 ## Config
 ### Author:
