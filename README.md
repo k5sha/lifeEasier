@@ -20,6 +20,10 @@ If you find something interesting on the internet or want to do something in the
 <p align="center">
   <img src="https://github.com/k5sha/lifeEasier/blob/master/media/how.jpg" alt="How work" width="726"/>
 </p>
+## DB schema
+<p align="center">
+  <img src="https://github.com/k5sha/lifeEasier/blob/master/media/db.svg" alt="db" width="726"/>
+</p>
 
 ## Config
 ### Author:
