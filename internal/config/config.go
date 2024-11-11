@@ -5,11 +5,13 @@ import (
 	"github.com/cristalhq/aconfig/aconfigyaml"
 	"log"
 	"sync"
+	"time"
 )
 
 type Config struct {
-	TelegramBotToken string `yaml:"telegram_bot_token" env:"TELEGRAM_BOT_TOKEN" required:"true"`
-	DatabaseDSN      string `yaml:"database_dsn" env:"DATABASE_DSN" default:"postgres://postgres:postgres@localhost:5432/life_easier_db?sslmode=disable"`
+	TelegramBotToken string        `yaml:"telegram_bot_token" env:"TELEGRAM_BOT_TOKEN" required:"true"`
+	DatabaseDSN      string        `yaml:"database_dsn" env:"DATABASE_DSN" default:"postgres://postgres:postgres@localhost:5432/life_easier_db?sslmode=disable"`
+	SendInterval     time.Duration `yaml:"send_interval" env:"SEND_INTERVAL" default:"30s"`
 }
 
 var (

@@ -2,8 +2,10 @@ package storage
 
 import (
 	"context"
+	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"github.com/k5sha/lifeEasier/internal/model"
+	"github.com/samber/lo"
 	"time"
 )
 
@@ -14,19 +16,57 @@ type LinkPostgresStorage struct {
 func NewLinkStorage(db *sqlx.DB) *LinkPostgresStorage {
 	return &LinkPostgresStorage{db: db}
 }
-func (l *LinkPostgresStorage) LinkById(ctx context.Context, id int64) (*model.Link, error) {
+
+func (l *LinkPostgresStorage) AllNotPosted(ctx context.Context, limit uint64) ([]model.Link, error) {
 	conn, err := l.db.Connx(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer conn.Close()
 
-	var link dbLink
-	if err := conn.GetContext(ctx, &link, `SELECT * FROM links WHERE id = $1`, id); err != nil {
+	var links []dbLink
+
+	if err := conn.SelectContext(
+		ctx,
+		&links,
+		`SELECT DISTINCT ON (chat_id) id, link, message, chat_id, posted_at
+         FROM links
+         WHERE posted_at IS NULL
+         AND created_at <= CURRENT_DATE - INTERVAL '1 day' 
+         ORDER BY chat_id LIMIT $1;`,
+		limit,
+	); err != nil {
 		return nil, err
 	}
 
-	return (*model.Link)(&link), nil
+	return lo.Map(links, func(link dbLink, _ int) model.Link {
+		return model.Link{
+			Id:        link.Id,
+			Link:      link.Link,
+			Message:   link.Message,
+			ChatId:    link.ChatId,
+			CreatedAt: link.CreatedAt,
+		}
+	}), nil
+}
+
+func (l *LinkPostgresStorage) MarkAsPosted(ctx context.Context, id int64) error {
+	conn, err := l.db.Connx(ctx)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	if _, err := conn.ExecContext(
+		ctx,
+		`UPDATE links SET posted_at = $1::timestamp WHERE id = $2;`,
+		time.Now().UTC().Format(time.RFC3339),
+		id,
+	); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (l *LinkPostgresStorage) Add(ctx context.Context, link model.Link) (int64, error) {
@@ -39,7 +79,7 @@ func (l *LinkPostgresStorage) Add(ctx context.Context, link model.Link) (int64, 
 	var id int64
 	row := conn.QueryRowxContext(
 		ctx,
-		`INSERT INTO links (link, message, user_id) VALUES ($1, $2, $3) RETURNING id;`, link.Link, link.Message, link.UserId,
+		`INSERT INTO links (link, message, chat_id) VALUES ($1, $2, $3) RETURNING id;`, link.Link, link.Message, link.ChatId,
 	)
 
 	if err := row.Err(); err != nil {
@@ -54,10 +94,10 @@ func (l *LinkPostgresStorage) Add(ctx context.Context, link model.Link) (int64, 
 }
 
 type dbLink struct {
-	Id        int64     `db:"id"`
-	Link      string    `db:"link"`
-	Message   string    `db:"message"`
-	Used      bool      `db:"used"`
-	UserId    int64     `db:"user_id"`
-	CreatedAt time.Time `db:"created_at"`
+	Id        int64        `db:"id"`
+	Link      string       `db:"link"`
+	Message   string       `db:"message"`
+	ChatId    int64        `db:"chat_id"`
+	PostedAt  sql.NullTime `db:"posted_at"`
+	CreatedAt time.Time    `db:"created_at"`
 }
