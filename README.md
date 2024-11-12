@@ -35,7 +35,7 @@ telegram_bot_token: 'YOUR_TOKEN'
 database_dsn: 'postgres://postgres:postgres@localhost:5432/your_db?sslmode=disable"'
 send_interval: '24h'
 ```
-
+- *env*
 ```env
 TELEGRAM_BOT_TOKEN=<YOUR_TOKEN>
 DATABASE_DSN=postgres://postgres:postgres@localhost:5432/your_db?sslmode=disable"
