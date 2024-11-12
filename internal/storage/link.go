@@ -32,7 +32,7 @@ func (l *LinkPostgresStorage) AllNotPosted(ctx context.Context, limit uint64) ([
 		`SELECT DISTINCT ON (chat_id) id, link, message, chat_id, posted_at
          FROM links
          WHERE posted_at IS NULL
-         AND created_at <= CURRENT_DATE - INTERVAL '1 day' 
+--          AND created_at <= CURRENT_DATE - INTERVAL '1 day' 
          ORDER BY chat_id LIMIT $1;`,
 		limit,
 	); err != nil {

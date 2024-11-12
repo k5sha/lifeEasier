@@ -35,10 +35,17 @@ telegram_bot_token: 'YOUR_TOKEN'
 database_dsn: 'postgres://postgres:postgres@localhost:5432/your_db?sslmode=disable"'
 send_interval: '24h'
 ```
+
+```env
+TELEGRAM_BOT_TOKEN=<YOUR_TOKEN>
+DATABASE_DSN=postgres://postgres:postgres@localhost:5432/your_db?sslmode=disable"
+SEND_INTERVAL=24h
+```
 ### Nice to have features (backlog)
 - [ ]  Use webhook for better performance
 - [ ]  Implement  reminders with custom intervals (e.g., daily, weekly)
 - [ ]  Ability to add notes or tags to each reminder 
+- [x]  Add beautiful message with a markdown 
 - [ ]  Ability to send multimedia reminders (e.g., images, videos, audio)
 - [ ]  Another type of SQL or NOSQL db (mongo, mysql)
 - [ ]  Command handler

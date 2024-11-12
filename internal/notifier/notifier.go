@@ -77,8 +77,16 @@ func (n *Notifier) SelectAndSendLink(ctx context.Context) error {
 }
 
 func (n *Notifier) sendArticle(link model.Link) error {
+	msgText := "*📢 Time for do it!*\n\n"
 
-	msg := tgbotapi.NewMessage(link.ChatId, fmt.Sprintf("%s\n\nLink: %s", link.Message, link.Link))
+	if link.Message != "" {
+		msgText += fmt.Sprintf("*📦 Your message:* %s\n\n", link.Message)
+	}
+
+	msgText += fmt.Sprintf("*🔗 Link:* [Click](%s)", link.Link)
+
+	msg := tgbotapi.NewMessage(link.ChatId, msgText)
+	msg.ParseMode = tgbotapi.ModeMarkdown
 
 	_, err := n.bot.Send(msg)
 	if err != nil {

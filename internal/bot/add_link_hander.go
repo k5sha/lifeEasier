@@ -54,7 +54,12 @@ func AddLinkHandler(ctx context.Context, bot *tgbotapi.BotAPI, update tgbotapi.U
 
 	log.Printf("[DEBUG] Successful add new linkModel with ID: %d ", linkID)
 
-	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Link added successfully ✅ Wait, I'll remind you later (1d-7d)")
+	msg := tgbotapi.NewMessage(update.Message.Chat.ID,
+		"Link added successfully ✅\n"+
+			"I'll remind you later, don't worry! You can expect a reminder in 1-7 days. ⏳\n"+
+			"See you soon! 👋",
+	)
+
 	_, err = bot.Send(msg)
 	if err != nil {
 		return fmt.Errorf("failed to send confirmation message: %v", err)
