@@ -27,7 +27,7 @@ func main() {
 
 	db, err := sqlx.Connect("postgres", config.Get().DatabaseDSN)
 	if err != nil {
-		log.Printf("[ERROR] failed to connect to db: %v", err)
+		log.Printf("[ERROR] failed to connect to db %v: %v", config.Get().DatabaseDSN, err)
 		return
 	}
 	defer db.Close()
