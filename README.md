@@ -49,6 +49,7 @@ SEND_INTERVAL=24h
 - [ ]  Ability to send multimedia reminders (e.g., images, videos, audio)
 - [ ]  Another type of SQL or NOSQL db (mongo, mysql)
 - [ ]  Command handler
+- [ ]  Add tests
 - [ ]  Video guide 
 ### Author:
 **Yurii (k5sha) Yevtushenko**
