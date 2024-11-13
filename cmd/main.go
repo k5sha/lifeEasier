@@ -11,6 +11,7 @@ import (
 	"github.com/k5sha/lifeEasier/internal/storage"
 	_ "github.com/lib/pq"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -43,6 +44,12 @@ func main() {
 		config.Get().SendInterval,
 	)
 
+	mux := http.NewServeMux()
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
@@ -60,5 +67,14 @@ func main() {
 	if err := easyBot.Run(ctx, linkStorage); err != nil {
 		log.Printf("[ERROR] failed to run botkit: %v", err)
 	}
+
+	go func() {
+		if err := http.ListenAndServe(":8080", mux); err != nil {
+			log.Printf("[ERROR] failed to run HTTP server: %v", err)
+		}
+	}()
+
+	<-ctx.Done()
+	log.Printf("[INFO] shutting down")
 
 }
