@@ -64,15 +64,15 @@ func main() {
 		}
 	}(ctx)
 
-	if err := easyBot.Run(ctx, linkStorage); err != nil {
-		log.Printf("[ERROR] failed to run botkit: %v", err)
-	}
-
-	go func() {
+	go func(ctx context.Context) {
 		if err := http.ListenAndServe(":8080", mux); err != nil {
 			log.Printf("[ERROR] failed to run HTTP server: %v", err)
 		}
-	}()
+	}(ctx)
+
+	if err := easyBot.Run(ctx, linkStorage); err != nil {
+		log.Printf("[ERROR] failed to run botkit: %v", err)
+	}
 
 	<-ctx.Done()
 	log.Printf("[INFO] shutting down")

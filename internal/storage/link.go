@@ -32,7 +32,7 @@ func (l *LinkPostgresStorage) AllNotPosted(ctx context.Context, limit uint64) ([
 		`SELECT DISTINCT ON (chat_id) id, link, message, chat_id, posted_at
          FROM links
          WHERE posted_at IS NULL
---          AND created_at <= CURRENT_DATE - INTERVAL '1 day' 
+         AND scheduled_at <= CURRENT_TIMESTAMP 
          ORDER BY chat_id LIMIT $1;`,
 		limit,
 	); err != nil {
@@ -79,7 +79,11 @@ func (l *LinkPostgresStorage) Add(ctx context.Context, link model.Link) (int64, 
 	var id int64
 	row := conn.QueryRowxContext(
 		ctx,
-		`INSERT INTO links (link, message, chat_id) VALUES ($1, $2, $3) RETURNING id;`, link.Link, link.Message, link.ChatId,
+		`INSERT INTO links (link, message, chat_id, scheduled_at) VALUES ($1, $2, $3, $4) RETURNING id;`,
+		link.Link,
+		link.Message,
+		link.ChatId,
+		link.ScheduledAt.UTC().Format(time.RFC3339),
 	)
 
 	if err := row.Err(); err != nil {
@@ -94,10 +98,11 @@ func (l *LinkPostgresStorage) Add(ctx context.Context, link model.Link) (int64, 
 }
 
 type dbLink struct {
-	Id        int64        `db:"id"`
-	Link      string       `db:"link"`
-	Message   string       `db:"message"`
-	ChatId    int64        `db:"chat_id"`
-	PostedAt  sql.NullTime `db:"posted_at"`
-	CreatedAt time.Time    `db:"created_at"`
+	Id          int64        `db:"id"`
+	Link        string       `db:"link"`
+	Message     string       `db:"message"`
+	ChatId      int64        `db:"chat_id"`
+	PostedAt    sql.NullTime `db:"posted_at"`
+	ScheduledAt time.Time    `db:"scheduled_at"`
+	CreatedAt   time.Time    `db:"created_at"`
 }

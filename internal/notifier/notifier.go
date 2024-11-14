@@ -54,8 +54,8 @@ func (n *Notifier) Start(ctx context.Context) error {
 	}
 }
 
-// TODO: Yaml config
 func (n *Notifier) SelectAndSendLink(ctx context.Context) error {
+	log.Printf("[INFO] Time to notify users")
 	links, err := n.links.AllNotPosted(ctx, 3)
 	if err != nil {
 		return err
@@ -63,7 +63,6 @@ func (n *Notifier) SelectAndSendLink(ctx context.Context) error {
 	if len(links) == 0 {
 		return nil
 	}
-
 	for _, link := range links {
 		if err := n.sendArticle(link); err != nil {
 			return err
