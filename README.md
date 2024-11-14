@@ -49,7 +49,7 @@ MIN_HOURS_RANDOM=72
 
 - via Docker
 ```bash
-docker-compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml up -d
 ```
 
 ### Nice to have features (backlog)
