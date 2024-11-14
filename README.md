@@ -24,7 +24,7 @@ If you find something interesting on the internet or want to do something in the
 ### Database schema
 <br>
 <p align="center">
-  <img src="https://github.com/k5sha/lifeEasier/blob/master/media/db.svg" alt="db" width="256"/>
+  <img src="https://github.com/k5sha/lifeEasier/blob/master/media/db.svg" alt="db_schema" width="256"/>
 </p>
 
 ### Config
